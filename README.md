@@ -51,7 +51,7 @@ duplicating anything:
 | `guest-drivers` | Guest device driver versions and staleness |
 | `guest-agent` | Guest hostname, timezone, logged-in user count |
 | `guest-os` | Guest operating system identity |
-| `inventory` | Snapshot, restore, export, clone, pool, and migration inventory |
+| `inventory` | Snapshot, restore, export, clone, pool, migration, and network attachment inventory |
 | `vmi-interfaces` | Guest network interfaces, ordinal naming deprecation |
 | `vmi-hotplug` | Ephemeral hotplug volume deprecation |
 

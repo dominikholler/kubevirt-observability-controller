@@ -98,6 +98,7 @@ var _ = Describe("Metrics Setup", func() {
 		Expect(names).To(HaveKey("kubevirt_vmclone_info"))
 		Expect(names).To(HaveKey("kubevirt_vmclone_create_date_timestamp_seconds"))
 		Expect(names).To(HaveKey("kubevirt_vmpool_info"))
+		Expect(names).To(HaveKey("kubevirt_network_attachment_definition_info"))
 		Expect(names).To(HaveKey("kubevirt_vmpool_desired_replicas"))
 		Expect(names).To(HaveKey("kubevirt_vmpool_replicas"))
 		Expect(names).To(HaveKey("kubevirt_vmpool_ready_replicas"))

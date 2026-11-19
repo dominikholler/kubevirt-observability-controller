@@ -35,6 +35,7 @@ import (
 	// to ensure that exec-entrypoint and run can make use of them.
 	_ "k8s.io/client-go/plugin/pkg/client/auth"
 
+	nadv1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
 	monitoringv1 "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	k8sv1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/fields"
@@ -82,6 +83,7 @@ func init() {
 	utilruntime.Must(exportv1.AddToScheme(scheme))
 	utilruntime.Must(clonev1.AddToScheme(scheme))
 	utilruntime.Must(poolv1.AddToScheme(scheme))
+	utilruntime.Must(nadv1.AddToScheme(scheme))
 
 	// +kubebuilder:scaffold:scheme
 }

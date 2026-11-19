@@ -21,20 +21,21 @@ package metrics
 import "k8s.io/client-go/tools/cache"
 
 type Stores struct {
-	VM                  cache.Store
-	VMI                 cache.Store
-	PVC                 cache.Store
-	Instancetype        cache.Store
-	ClusterInstancetype cache.Store
-	Preference          cache.Store
-	ClusterPreference   cache.Store
-	ControllerRevision  cache.Store
-	VirtHandlerPod      cache.Store
-	VMSnapshot          cache.Store
-	VMRestore           cache.Store
-	VMExport            cache.Store
-	VMClone             cache.Store
-	VMPool              cache.Store
+	VM                          cache.Store
+	VMI                         cache.Store
+	PVC                         cache.Store
+	Instancetype                cache.Store
+	ClusterInstancetype         cache.Store
+	Preference                  cache.Store
+	ClusterPreference           cache.Store
+	ControllerRevision          cache.Store
+	VirtHandlerPod              cache.Store
+	VMSnapshot                  cache.Store
+	VMRestore                   cache.Store
+	VMExport                    cache.Store
+	VMClone                     cache.Store
+	VMPool                      cache.Store
+	NetworkAttachmentDefinition cache.Store
 }
 
 type Indexers struct {

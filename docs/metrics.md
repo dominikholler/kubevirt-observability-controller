@@ -4,6 +4,7 @@
 |------|-------|------|------|-------------|
 | kubevirt_guest_device_driver_config_invalid | `guest-drivers` | Metric | Gauge | 1 while the guest device drivers ConfigMap present in the cluster is rejected and the last valid versions are kept, 0 otherwise. |
 | kubevirt_guest_device_driver_latest_version_info | `guest-drivers` | Metric | Gauge | Latest available guest device driver version for a device and guest OS version, as declared in the guest device drivers ConfigMap. |
+| kubevirt_network_attachment_definition_info | `inventory` | Metric | Gauge | Details about additional network interfaces attached to Virtual Machines. |
 | kubevirt_vm_create_date_timestamp_seconds | `vm-status` | Metric | Gauge | Virtual Machine creation timestamp. |
 | kubevirt_vm_disk_allocated_size_bytes | `vm-status` | Metric | Gauge | Allocated disk size of a Virtual Machine in bytes. |
 | kubevirt_vm_error_status_last_transition_timestamp_seconds | `vm-status` | Metric | Counter | Virtual Machine last transition timestamp to error status. |
@@ -180,7 +181,7 @@ see
 | `guest-filesystem` | off | Guest filesystem capacity and usage |
 | `guest-os` | on | Guest operating system identity |
 | `guest-drivers` | on | Guest device driver versions and staleness |
-| `inventory` | on | Snapshot, restore, export, clone, pool, and migration inventory |
+| `inventory` | on | Snapshot, restore, export, clone, pool, migration, and network attachment inventory |
 | `deprecated` | off | Superseded recording rules kept for compatibility |
 
 ## Developing new metrics

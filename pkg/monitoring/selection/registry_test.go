@@ -138,6 +138,7 @@ var _ = Describe("Default selection", func() {
 			"kubevirt_vmsnapshot_info",
 			"kubevirt_vmsnapshot_create_date_timestamp_seconds",
 			"kubevirt_vmi_migration_info",
+			"kubevirt_network_attachment_definition_info",
 		))
 	})
 
@@ -163,7 +164,7 @@ var _ = Describe("ForFlags", func() {
 		sel, err := selection.ForFlags(testNamespace, "", "", "", groups.GroupDefaults)
 		Expect(err).ToNot(HaveOccurred())
 
-		Expect(sel.Metrics).To(HaveLen(24))
+		Expect(sel.Metrics).To(HaveLen(25))
 		Expect(sel.RecordingRules).To(HaveLen(1))
 		Expect(sel.Alerts).To(HaveLen(3))
 		Expect(sel.Empty).To(BeEmpty())
@@ -223,7 +224,7 @@ var _ = Describe("ForFlags with EveryGroup rule defaulting", func() {
 		sel, err := selection.ForFlags(testNamespace, "", "", "", groups.EveryGroup)
 		Expect(err).ToNot(HaveOccurred())
 
-		Expect(sel.Metrics).To(HaveLen(24))
+		Expect(sel.Metrics).To(HaveLen(25))
 		Expect(sel.Metrics).ToNot(HaveKey("kubevirt_vmi_memory_resident_bytes"))
 	})
 

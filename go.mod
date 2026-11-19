@@ -4,6 +4,7 @@ go 1.26.0
 
 require (
 	github.com/go-logr/logr v1.4.4
+	github.com/k8snetworkplumbingwg/network-attachment-definition-client v1.7.7
 	github.com/onsi/ginkgo/v2 v2.32.0
 	github.com/onsi/gomega v1.42.1
 	github.com/openshift/api v0.0.0-20260901194050-81278704edb0

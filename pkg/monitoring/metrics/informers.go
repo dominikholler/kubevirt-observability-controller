@@ -22,8 +22,10 @@ import (
 	"context"
 	"fmt"
 
+	nadv1 "github.com/k8snetworkplumbingwg/network-attachment-definition-client/pkg/apis/k8s.cni.cncf.io/v1"
 	appsv1 "k8s.io/api/apps/v1"
 	k8sv1 "k8s.io/api/core/v1"
+	apimeta "k8s.io/apimachinery/pkg/api/meta"
 	toolscache "k8s.io/client-go/tools/cache"
 	clonev1 "kubevirt.io/api/clone/v1beta1"
 	k6tv1 "kubevirt.io/api/core/v1"
@@ -31,6 +33,7 @@ import (
 	instancetypev1beta1 "kubevirt.io/api/instancetype/v1beta1"
 	poolv1 "kubevirt.io/api/pool/v1beta1"
 	snapshotv1 "kubevirt.io/api/snapshot/v1beta1"
+	ctrl "sigs.k8s.io/controller-runtime"
 	ctrlcache "sigs.k8s.io/controller-runtime/pkg/cache"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
@@ -140,22 +143,28 @@ func SetupInformers(ctx context.Context, c ctrlcache.Cache) error {
 		return fmt.Errorf("VMPool: %w", err)
 	}
 
+	nadStore, err := networkAttachmentDefinitionStore(ctx, c)
+	if err != nil {
+		return err
+	}
+
 	SetStores(
 		&Stores{
-			VM:                  vm.GetStore(),
-			VMI:                 vmi.GetStore(),
-			PVC:                 pvc.GetStore(),
-			Instancetype:        instancetype.GetStore(),
-			ClusterInstancetype: clusterInstancetype.GetStore(),
-			Preference:          preference.GetStore(),
-			ClusterPreference:   clusterPreference.GetStore(),
-			ControllerRevision:  controllerRevision.GetStore(),
-			VirtHandlerPod:      pod.GetStore(),
-			VMSnapshot:          vmSnapshot.GetStore(),
-			VMRestore:           vmRestore.GetStore(),
-			VMExport:            vmExport.GetStore(),
-			VMClone:             vmClone.GetStore(),
-			VMPool:              vmPool.GetStore(),
+			VM:                          vm.GetStore(),
+			VMI:                         vmi.GetStore(),
+			PVC:                         pvc.GetStore(),
+			Instancetype:                instancetype.GetStore(),
+			ClusterInstancetype:         clusterInstancetype.GetStore(),
+			Preference:                  preference.GetStore(),
+			ClusterPreference:           clusterPreference.GetStore(),
+			ControllerRevision:          controllerRevision.GetStore(),
+			VirtHandlerPod:              pod.GetStore(),
+			VMSnapshot:                  vmSnapshot.GetStore(),
+			VMRestore:                   vmRestore.GetStore(),
+			VMExport:                    vmExport.GetStore(),
+			VMClone:                     vmClone.GetStore(),
+			VMPool:                      vmPool.GetStore(),
+			NetworkAttachmentDefinition: nadStore,
 		},
 		&Indexers{
 			VMIMigration: vmim.GetIndexer(),
@@ -164,6 +173,23 @@ func SetupInformers(ctx context.Context, c ctrlcache.Cache) error {
 	)
 
 	return nil
+}
+
+func networkAttachmentDefinitionStore(
+	ctx context.Context, c ctrlcache.Cache,
+) (toolscache.Store, error) {
+	inf, err := informerFor(ctx, c, &nadv1.NetworkAttachmentDefinition{})
+	if err == nil {
+		return inf.GetStore(), nil
+	}
+	if apimeta.IsNoMatchError(err) {
+		ctrl.Log.Info(
+			"NetworkAttachmentDefinition CRD is not installed; " +
+				"kubevirt_network_attachment_definition_info will stay empty",
+		)
+		return nil, nil
+	}
+	return nil, fmt.Errorf("NetworkAttachmentDefinition: %w", err)
 }
 
 func informerFor(

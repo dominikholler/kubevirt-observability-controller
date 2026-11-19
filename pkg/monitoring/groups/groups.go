@@ -185,7 +185,7 @@ var All = []Group{
 
 	{
 		Name:        Inventory,
-		Description: "Snapshot, restore, export, clone, pool, and migration inventory",
+		Description: "Snapshot, restore, export, clone, pool, migration, and network attachment inventory",
 		Default:     true,
 	},
 	{

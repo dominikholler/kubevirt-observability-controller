@@ -36,6 +36,7 @@ const (
 	inventoryVMIName  = "e2e-inventory-vmi"
 	inventoryVMIMName = "e2e-inventory-vmim"
 	inventoryPoolName = "e2e-inventory-pool"
+	inventoryNADName  = "e2e-inventory-nad"
 
 	kubevirtAPIGroup   = "kubevirt.io"
 	virtualMachineKind = "VirtualMachine"
@@ -277,6 +278,44 @@ var _ = Describe("Inventory metrics", func() {
 		waitForMetricAbsent("kubevirt_vmpool_replica_failure", replicaLabels)
 	})
 
+	It("should expose kubevirt_network_attachment_definition_info and drop the series on delete", func() {
+		skipWithoutCRD("network-attachment-definitions.k8s.cni.cncf.io")
+
+		Expect(lib.KubectlApply(nadManifest(
+			inventoryNADName, testVMINamespace,
+		))).To(Succeed())
+		DeferCleanup(func() error {
+			return lib.DeleteNamespacedResource(
+				"net-attach-def", inventoryNADName, testVMINamespace,
+			)
+		})
+
+		infoLabels := map[string]string{
+			"namespace":                          testVMINamespace,
+			"network":                            inventoryNADName,
+			"vlan":                               "100",
+			"cni_type":                           "bridge",
+			"ipam_type":                          "static",
+			"ovn_subnets":                        "",
+			"udn_role":                           "",
+			"ovn_topology":                       "",
+			"ovn_persistent_ips":                 "",
+			"mac_spoof_filtering":                "",
+			"bridge_preserving_default_vlan":     "",
+			"bridge_disable_container_interface": "",
+		}
+		waitForMetricValue(
+			"kubevirt_network_attachment_definition_info", infoLabels, 1,
+		)
+
+		Expect(lib.DeleteNamespacedResource(
+			"net-attach-def", inventoryNADName, testVMINamespace,
+		)).To(Succeed())
+		waitForMetricAbsent(
+			"kubevirt_network_attachment_definition_info", infoLabels,
+		)
+	})
+
 	It("should expose kubevirt_vmi_migration_info and drop the series on delete", func() {
 		Expect(lib.KubectlApply(inventoryVMIManifest(
 			inventoryVMIName, testVMINamespace,
@@ -492,6 +531,22 @@ spec:
       requests:
         memory: 64Mi
   terminationGracePeriodSeconds: 0`, name, namespace)
+}
+
+func nadManifest(name, namespace string) string {
+	return fmt.Sprintf(`apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  name: %s
+  namespace: %s
+spec:
+  config: '{
+    "cniVersion": "0.3.1",
+    "name": "%s",
+    "type": "bridge",
+    "vlan": 100,
+    "ipam": {"type": "static"}
+  }'`, name, namespace, name)
 }
 
 func vmimManifest(name, vmiName, namespace string) string {

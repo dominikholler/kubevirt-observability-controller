@@ -25,6 +25,7 @@ import (
 	"k8s.io/client-go/tools/cache"
 	ctrlmetrics "sigs.k8s.io/controller-runtime/pkg/metrics"
 
+	"github.com/kubevirt/kubevirt-observability-controller/pkg/monitoring/metrics/nad"
 	"github.com/kubevirt/kubevirt-observability-controller/pkg/monitoring/metrics/vm"
 	"github.com/kubevirt/kubevirt-observability-controller/pkg/monitoring/metrics/vmi"
 )
@@ -56,6 +57,9 @@ func AllCollectors() []operatormetrics.Collector {
 		vm.NewVMExportStatsCollector(inventoryStore(func(s *Stores) cache.Store { return s.VMExport })),
 		vm.NewVMCloneStatsCollector(inventoryStore(func(s *Stores) cache.Store { return s.VMClone })),
 		vm.NewVMPoolStatsCollector(inventoryStore(func(s *Stores) cache.Store { return s.VMPool })),
+		nad.NewCollector(inventoryStore(func(s *Stores) cache.Store {
+			return s.NetworkAttachmentDefinition
+		})),
 	}
 }
 
